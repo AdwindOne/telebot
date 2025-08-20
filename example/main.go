@@ -306,26 +306,35 @@ func main() {
 	b.Start()
 }
 
-// 显示交易菜单
+// 发送带“上方按钮”的消息
 func showTradeMenu(c tele.Context) error {
-	menu := &tele.ReplyMarkup{ResizeKeyboard: true}
+	inl := &tele.ReplyMarkup{}
 
-	var buttons []tele.Btn
-	for network := range supportedDEXs {
-		buttons = append(buttons, menu.Text("🌐 "+network))
-	}
+	btnETH := inl.Data("ETH", "net_eth")
+	btnSOL := inl.Data("SOL", "net_sol")
+	btnBSC := inl.Data("BSC", "net_bsc")
 
-	// 每行最多2个按钮
-	for i := 0; i < len(buttons); i += 2 {
-		if i+1 < len(buttons) {
-			menu.Reply(menu.Row(buttons[i], buttons[i+1]))
-		} else {
-			menu.Reply(menu.Row(buttons[i]))
-		}
-	}
+	inl.Inline(inl.Row(btnETH, btnSOL, btnBSC))
 
-	return c.Send("🌐 请选择交易网络：", menu)
+	// 可选：移除下方回复键盘
+	_ = c.Send(" ", &tele.ReplyMarkup{RemoveKeyboard: true})
+
+	return c.Send("🌐 请选择交易网络：", inl)
 }
+
+// 回调处理
+b.Handle(&btnETH, func(c tele.Context) error {
+	_ = c.Respond()
+	return showDEXMenu(c, "ETH")
+})
+b.Handle(&btnSOL, func(c tele.Context) error {
+	_ = c.Respond()
+	return showDEXMenu(c, "SOL")
+})
+b.Handle(&btnBSC, func(c tele.Context) error {
+	_ = c.Respond()
+	return showDEXMenu(c, "BSC")
+})
 
 // 显示DEX选择菜单
 func showDEXMenu(c tele.Context, network string) error {
