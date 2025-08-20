@@ -52,6 +52,46 @@ func main() {
 		return c.Send("可用命令：\n/start — 欢迎\n/echo <内容> — 回显\n或按按钮 Ping Pong")
 	})
 
+	// 处理普通聊天消息
+	b.Handle(tele.OnText, func(c tele.Context) error {
+		message := c.Text()
+		
+		// 根据消息内容进行不同的回复
+		switch {
+		case message == "你好" || message == "hello" || message == "hi":
+			return c.Send("你好！很高兴和你聊天 😊")
+		case message == "再见" || message == "bye" || message == "goodbye":
+			return c.Send("再见！期待下次聊天 👋")
+		case message == "时间" || message == "time":
+			return c.Send("当前时间: " + time.Now().Format("2006-01-02 15:04:05"))
+		case message == "帮助" || message == "help":
+			return c.Send("我可以和你聊天！试试说：\n- 你好\n- 时间\n- 再见\n或者使用命令：\n/start - 开始\n/echo <内容> - 回显")
+		default:
+			// 回显用户的消息
+			return c.Send("你说: " + message + "\n\n💡 提示：发送 '帮助' 查看我能做什么")
+		}
+	})
+
+	// 处理图片消息
+	b.Handle(tele.OnPhoto, func(c tele.Context) error {
+		return c.Send("收到了一张图片！📸")
+	})
+
+	// 处理语音消息
+	b.Handle(tele.OnVoice, func(c tele.Context) error {
+		return c.Send("收到了语音消息！🎤")
+	})
+
+	// 处理文档消息
+	b.Handle(tele.OnDocument, func(c tele.Context) error {
+		return c.Send("收到了文档！📄")
+	})
+
+	// 处理贴纸消息
+	b.Handle(tele.OnSticker, func(c tele.Context) error {
+		return c.Send("收到了贴纸！😄")
+	})
+
 	// 启动 bot
 	log.Println("Bot 正在启动…")
 	b.Start()
