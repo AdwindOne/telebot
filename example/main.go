@@ -109,14 +109,26 @@ func main() {
 		return showHelp(c)
 	})
 
-	// 统一处理内联回调按钮
+	// 处理网络选择（内联按钮唯一键）
+	b.Handle("\fnet_eth", func(c tele.Context) error {
+		_ = c.Respond()
+		return showDEXMenu(c, "ETH")
+	})
+	b.Handle("\fnet_sol", func(c tele.Context) error {
+		_ = c.Respond()
+		return showDEXMenu(c, "SOL")
+	})
+	b.Handle("\fnet_bsc", func(c tele.Context) error {
+		_ = c.Respond()
+		return showDEXMenu(c, "BSC")
+	})
+
+	// 兜底：统一处理回调（避免某些环境下唯一键路由未命中）
 	b.Handle(tele.OnCallback, func(c tele.Context) error {
 		cb := c.Callback()
 		if cb == nil {
 			return nil
 		}
-		// 唯一键在 options.Data 中以 \f 开头，格式: \funique|payload
-		// 库已解析到 c.Callback().Unique 和 c.Callback().Data（去掉前缀）
 		switch cb.Unique {
 		case "net_eth":
 			_ = c.Respond()
@@ -324,11 +336,8 @@ func showTradeMenu(c tele.Context) error {
 	btnSOL := inl.Data("SOL", "net_sol")
 	btnBSC := inl.Data("BSC", "net_bsc")
 
-	inl.Inline(inl.Row(btnETH, btnSOL, btnBSC))
-
-	// 可选：移除下方回复键盘
-	_ = c.Send(" ", &tele.ReplyMarkup{RemoveKeyboard: true})
-
+		inl.Inline(inl.Row(btnETH, btnSOL, btnBSC))
+	
 	return c.Send("🌐 请选择交易网络：", inl)
 }
 
