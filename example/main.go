@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"fmt"
 	"log"
-	"math/big"
 	"os"
 	"regexp"
 	"strconv"
@@ -114,11 +113,11 @@ func main() {
 	b.Handle("🌐 ETH", func(c tele.Context) error {
 		return showDEXMenu(c, "ETH")
 	})
-	
+
 	b.Handle("🌐 SOL", func(c tele.Context) error {
 		return showDEXMenu(c, "SOL")
 	})
-	
+
 	b.Handle("🌐 BSC", func(c tele.Context) error {
 		return showDEXMenu(c, "BSC")
 	})
@@ -136,7 +135,7 @@ func main() {
 	b.Handle("🔄 1inch", func(c tele.Context) error {
 		return showTokenSelection(c, "1inch")
 	})
-	
+
 	// 处理DEX选择 - SOL网络
 	b.Handle("🔄 Raydium", func(c tele.Context) error {
 		return showTokenSelection(c, "Raydium")
@@ -150,7 +149,7 @@ func main() {
 	b.Handle("🔄 Serum", func(c tele.Context) error {
 		return showTokenSelection(c, "Serum")
 	})
-	
+
 	// 处理DEX选择 - BSC网络
 	b.Handle("🔄 PancakeSwap", func(c tele.Context) error {
 		return showTokenSelection(c, "PancakeSwap")
@@ -172,7 +171,7 @@ func main() {
 	b.Handle("💰 DAI", func(c tele.Context) error {
 		return showTradeForm(c, "DAI")
 	})
-	
+
 	// 处理代币选择 - SOL代币
 	b.Handle("💰 SOL", func(c tele.Context) error {
 		return showTradeForm(c, "SOL")
@@ -180,7 +179,7 @@ func main() {
 	b.Handle("💰 RAY", func(c tele.Context) error {
 		return showTradeForm(c, "RAY")
 	})
-	
+
 	// 处理代币选择 - BSC代币
 	b.Handle("💰 BNB", func(c tele.Context) error {
 		return showTradeForm(c, "BNB")
@@ -352,11 +351,11 @@ func showDEXMenu(c tele.Context, network string) error {
 // 显示代币选择菜单
 func showTokenSelection(c tele.Context, dexName string) error {
 	menu := &tele.ReplyMarkup{ResizeKeyboard: true}
-	
+
 	// 根据DEX确定网络和对应的代币
 	var network string
 	var tokens []string
-	
+
 	switch dexName {
 	case "Uniswap V3", "Uniswap V2", "SushiSwap", "1inch":
 		network = "ETH"
@@ -379,12 +378,12 @@ func showTokenSelection(c tele.Context, dexName string) error {
 			tokens = append(tokens, token)
 		}
 	}
-	
+
 	var buttons []tele.Btn
 	for _, token := range tokens {
 		buttons = append(buttons, menu.Text("💰 "+token))
 	}
-	
+
 	// 每行最多2个按钮
 	for i := 0; i < len(buttons); i += 2 {
 		if i+1 < len(buttons) {
@@ -393,7 +392,7 @@ func showTokenSelection(c tele.Context, dexName string) error {
 			menu.Reply(menu.Row(buttons[i]))
 		}
 	}
-	
+
 	return c.Send("💰 请选择要交易的代币（"+network+" 网络 - "+dexName+"）：", menu)
 }
 
@@ -401,7 +400,7 @@ func showTokenSelection(c tele.Context, dexName string) error {
 func showTradeForm(c tele.Context, tokenName string) error {
 	// 创建快速交易按钮
 	menu := &tele.ReplyMarkup{ResizeKeyboard: true}
-	
+
 	// 根据代币确定网络
 	var network string
 	switch tokenName {
@@ -414,14 +413,14 @@ func showTradeForm(c tele.Context, tokenName string) error {
 	default:
 		network = "ETH"
 	}
-	
+
 	// 创建快速交易选项
 	btnQuickTrade := menu.Text("⚡ 快速交易")
 	btnCustomTrade := menu.Text("📝 自定义交易")
 	btnBack := menu.Text("🔙 返回")
-	
+
 	menu.Reply(menu.Row(btnQuickTrade), menu.Row(btnCustomTrade), menu.Row(btnBack))
-	
+
 	form := `📝 交易表单
 
 代币: ` + tokenName + `
@@ -439,7 +438,7 @@ func showTradeForm(c tele.Context, tokenName string) error {
 /trade_form ` + network + ` Uniswap ` + tokenName + ` WETH 100 0.5 0x1234567890abcdef
 
 💡 提示：请确保钱包地址正确且有足够余额`
-	
+
 	return c.Send(form, menu)
 }
 
@@ -449,7 +448,7 @@ func processTradeSubmission(c tele.Context) error {
 	if len(args) < 7 {
 		return c.Send("❌ 参数不足！请按格式填写：\n/trade_form <网络> <DEX> <输入代币> <输出代币> <数量> <滑点%> <钱包地址>")
 	}
-	
+
 	// 解析参数
 	network := strings.ToUpper(args[0])
 	dex := args[1]
@@ -464,12 +463,12 @@ func processTradeSubmission(c tele.Context) error {
 		return c.Send("❌ 滑点格式错误！请输入数字")
 	}
 	walletAddr := args[6]
-	
+
 	// 验证网络
 	if network != "ETH" && network != "SOL" && network != "BSC" {
 		return c.Send("❌ 不支持的网络！请选择：ETH、SOL、BSC")
 	}
-	
+
 	// 验证DEX
 	validDEXs := supportedDEXs[network]
 	dexValid := false
@@ -482,7 +481,7 @@ func processTradeSubmission(c tele.Context) error {
 	if !dexValid {
 		return c.Send("❌ 不支持的DEX！" + network + " 网络支持的DEX：" + strings.Join(validDEXs, "、"))
 	}
-	
+
 	// 验证代币
 	validTokens := supportedTokens[network]
 	tokenInValid := false
@@ -501,29 +500,29 @@ func processTradeSubmission(c tele.Context) error {
 	if !tokenOutValid {
 		return c.Send("❌ 不支持的输出代币！" + network + " 网络支持的代币：" + strings.Join(getTokenList(validTokens), "、"))
 	}
-	
+
 	// 验证数量
 	if amount <= 0 {
 		return c.Send("❌ 交易数量必须大于0")
 	}
-	
+
 	// 验证滑点
 	if slippage < 0.1 || slippage > 10 {
 		return c.Send("❌ 滑点必须在 0.1% - 10% 之间")
 	}
-	
+
 	// 验证钱包地址
 	if !isValidWalletAddress(walletAddr, network) {
 		return c.Send("❌ 无效的钱包地址！请检查地址格式")
 	}
-	
+
 	// 获取代币合约地址
 	tokenInAddr := validTokens[tokenIn]
 	tokenOutAddr := validTokens[tokenOut]
-	
+
 	// 预估交易结果
 	estimatedOutput, gasFee := estimateTrade(network, dex, tokenIn, tokenOut, amount, slippage)
-	
+
 	// 显示交易确认
 	confirmation := `📋 交易确认
 
@@ -542,13 +541,13 @@ func processTradeSubmission(c tele.Context) error {
 💸 总费用: ` + args[4] + ` ` + tokenIn + ` + ` + gasFee + `
 
 ⚠️ 请确认以上信息是否正确`
-	
+
 	menu := &tele.ReplyMarkup{ResizeKeyboard: true}
 	btnConfirm := menu.Text("✅ 确认交易")
 	btnCancel := menu.Text("❌ 取消交易")
 	btnModify := menu.Text("✏️ 修改参数")
 	menu.Reply(menu.Row(btnConfirm, btnCancel), menu.Row(btnModify))
-	
+
 	// 存储交易信息到上下文（实际应用中应该使用数据库）
 	storeTradeInfo(c, TradeRequest{
 		Network:    network,
@@ -559,7 +558,7 @@ func processTradeSubmission(c tele.Context) error {
 		Slippage:   slippage,
 		WalletAddr: walletAddr,
 	})
-	
+
 	return c.Send(confirmation, menu)
 }
 
@@ -570,89 +569,89 @@ func executeTrade(c tele.Context) error {
 	if tradeInfo.Network == "" {
 		return c.Send("❌ 交易信息已过期，请重新填写交易表单")
 	}
-	
+
 	// 开始交易执行流程
 	statusMsg := c.Send("🔄 正在执行交易...\n\n" +
 		"📊 状态：初始化中\n" +
 		"⏱️ 预计时间：30-60秒")
-	
+
 	// 模拟交易执行步骤
 	go func() {
 		// 步骤1：检查余额
 		time.Sleep(2 * time.Second)
-		c.Edit(statusMsg, "🔄 正在执行交易...\n\n" +
-			"📊 状态：检查钱包余额\n" +
-			"✅ 余额充足\n" +
+		c.Edit(statusMsg, "🔄 正在执行交易...\n\n"+
+			"📊 状态：检查钱包余额\n"+
+			"✅ 余额充足\n"+
 			"⏱️ 预计时间：25-55秒")
-		
+
 		// 步骤2：获取价格
 		time.Sleep(3 * time.Second)
-		c.Edit(statusMsg, "🔄 正在执行交易...\n\n" +
-			"📊 状态：获取实时价格\n" +
-			"✅ 价格获取成功\n" +
+		c.Edit(statusMsg, "🔄 正在执行交易...\n\n"+
+			"📊 状态：获取实时价格\n"+
+			"✅ 价格获取成功\n"+
 			"⏱️ 预计时间：20-50秒")
-		
+
 		// 步骤3：计算滑点
 		time.Sleep(2 * time.Second)
-		c.Edit(statusMsg, "🔄 正在执行交易...\n\n" +
-			"📊 状态：计算滑点保护\n" +
-			"✅ 滑点计算完成\n" +
+		c.Edit(statusMsg, "🔄 正在执行交易...\n\n"+
+			"📊 状态：计算滑点保护\n"+
+			"✅ 滑点计算完成\n"+
 			"⏱️ 预计时间：15-45秒")
-		
+
 		// 步骤4：构建交易
 		time.Sleep(3 * time.Second)
-		c.Edit(statusMsg, "🔄 正在执行交易...\n\n" +
-			"📊 状态：构建交易数据\n" +
-			"✅ 交易数据准备完成\n" +
+		c.Edit(statusMsg, "🔄 正在执行交易...\n\n"+
+			"📊 状态：构建交易数据\n"+
+			"✅ 交易数据准备完成\n"+
 			"⏱️ 预计时间：10-40秒")
-		
+
 		// 步骤5：签名交易
 		time.Sleep(2 * time.Second)
-		c.Edit(statusMsg, "🔄 正在执行交易...\n\n" +
-			"📊 状态：签名交易\n" +
-			"✅ 交易签名完成\n" +
+		c.Edit(statusMsg, "🔄 正在执行交易...\n\n"+
+			"📊 状态：签名交易\n"+
+			"✅ 交易签名完成\n"+
 			"⏱️ 预计时间：5-35秒")
-		
+
 		// 步骤6：广播交易
 		time.Sleep(3 * time.Second)
 		txHash := generateTxHash()
-		c.Edit(statusMsg, "🔄 正在执行交易...\n\n" +
-			"📊 状态：广播到区块链\n" +
-			"✅ 交易已广播\n" +
-			"🔗 交易哈希：" + txHash + "\n" +
+		c.Edit(statusMsg, "🔄 正在执行交易...\n\n"+
+			"📊 状态：广播到区块链\n"+
+			"✅ 交易已广播\n"+
+			"🔗 交易哈希："+txHash+"\n"+
 			"⏱️ 等待确认中...")
-		
+
 		// 步骤7：等待确认
 		time.Sleep(5 * time.Second)
-		c.Edit(statusMsg, "✅ 交易执行成功！\n\n" +
-			"📊 状态：已确认\n" +
-			"🔗 交易哈希：" + txHash + "\n" +
-			"🌐 网络：" + tradeInfo.Network + "\n" +
-			"🔄 DEX：" + tradeInfo.DEX + "\n" +
-			"💰 输入：" + fmt.Sprintf("%.2f", tradeInfo.Amount) + " " + tradeInfo.TokenIn + "\n" +
-			"📈 输出：~" + calculateOutput(tradeInfo) + " " + tradeInfo.TokenOut + "\n\n" +
-			"💡 你可以在区块链浏览器中查看交易详情\n" +
-			"🔗 浏览器链接：" + getExplorerLink(tradeInfo.Network, txHash))
-		
+		c.Edit(statusMsg, "✅ 交易执行成功！\n\n"+
+			"📊 状态：已确认\n"+
+			"🔗 交易哈希："+txHash+"\n"+
+			"🌐 网络："+tradeInfo.Network+"\n"+
+			"🔄 DEX："+tradeInfo.DEX+"\n"+
+			"💰 输入："+fmt.Sprintf("%.2f", tradeInfo.Amount)+" "+tradeInfo.TokenIn+"\n"+
+			"📈 输出：~"+calculateOutput(tradeInfo)+" "+tradeInfo.TokenOut+"\n\n"+
+			"💡 你可以在区块链浏览器中查看交易详情\n"+
+			"🔗 浏览器链接："+getExplorerLink(tradeInfo.Network, txHash))
+
 		// 清理存储的交易信息
 		clearTradeInfo(c)
 	}()
-	
+
 	return nil
 }
 
 // 显示快速交易表单
 func showQuickTradeForm(c tele.Context) error {
 	menu := &tele.ReplyMarkup{ResizeKeyboard: true}
-	
+
 	// 快速交易选项
 	btnUSDT := menu.Text("💰 USDT")
 	btnUSDC := menu.Text("💰 USDC")
 	btnWETH := menu.Text("💰 WETH")
 	btnBack := menu.Text("🔙 返回")
-	
+
 	menu.Reply(menu.Row(btnUSDT, btnUSDC), menu.Row(btnWETH), menu.Row(btnBack))
-	
+
 	form := `⚡ 快速交易
 
 请选择要交换的代币：
@@ -667,7 +666,7 @@ func showQuickTradeForm(c tele.Context) error {
 • Gas: 自动优化
 
 💡 选择代币后，请输入交易数量`
-	
+
 	return c.Send(form, menu)
 }
 
@@ -692,7 +691,7 @@ func showCustomTradeForm(c tele.Context) error {
 /trade_form ETH Uniswap USDT WETH 100 0.5 0x1234567890abcdef
 
 ⚠️ 请确保所有参数正确，交易不可撤销！`
-	
+
 	return c.Send(form)
 }
 
@@ -702,7 +701,7 @@ func showModifyForm(c tele.Context) error {
 	if tradeInfo.Network == "" {
 		return c.Send("❌ 没有找到交易信息，请重新开始交易流程")
 	}
-	
+
 	form := `✏️ 修改交易参数
 
 当前交易信息：
@@ -721,7 +720,7 @@ func showModifyForm(c tele.Context) error {
 /trade_form ` + tradeInfo.Network + ` ` + tradeInfo.DEX + ` ` + tradeInfo.TokenIn + ` ` + tradeInfo.TokenOut + ` 100 0.5 ` + tradeInfo.WalletAddr + `
 
 💡 提示：你可以修改任何参数，包括网络、DEX、代币、数量、滑点等`
-	
+
 	return c.Send(form)
 }
 
@@ -818,10 +817,10 @@ func estimateTrade(network, dex, tokenIn, tokenOut string, amount, slippage floa
 	default:
 		price = 1.0 // 默认1:1
 	}
-	
+
 	// 计算输出数量（考虑滑点）
 	output := amount * price * (1 - slippage/100)
-	
+
 	// 预估Gas费用
 	var gasFee string
 	switch network {
@@ -834,7 +833,7 @@ func estimateTrade(network, dex, tokenIn, tokenOut string, amount, slippage floa
 	default:
 		gasFee = "0.005 ETH"
 	}
-	
+
 	return fmt.Sprintf("%.4f", output), gasFee
 }
 
@@ -858,7 +857,7 @@ func calculateOutput(trade TradeRequest) string {
 	default:
 		price = 1.0
 	}
-	
+
 	output := trade.Amount * price * (1 - trade.Slippage/100)
 	return fmt.Sprintf("%.4f", output)
 }
