@@ -93,6 +93,12 @@ func main() {
 	})
 
 	// 启动 bot
-	log.Println("Bot 正在启动…")
+	log.Println("🤖 Bot 正在启动…")
+	log.Println("✅ Bot 启动成功！")
+	log.Println("📱 现在可以通过 Telegram 与 Bot 聊天了")
+	log.Println("🔗 支持的聊天类型：文本、图片、语音、文档、贴纸")
+	log.Println("💬 试试发送：你好、时间、帮助")
+	log.Println("⏹️  按 Ctrl+C 停止 Bot")
+	
 	b.Start()
 }
