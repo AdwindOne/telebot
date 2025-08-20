@@ -109,17 +109,27 @@ func main() {
 		return showHelp(c)
 	})
 
-	// 处理网络选择
-	b.Handle("🌐 ETH", func(c tele.Context) error {
-		return showDEXMenu(c, "ETH")
-	})
-
-	b.Handle("🌐 SOL", func(c tele.Context) error {
-		return showDEXMenu(c, "SOL")
-	})
-
-	b.Handle("🌐 BSC", func(c tele.Context) error {
-		return showDEXMenu(c, "BSC")
+	// 统一处理内联回调按钮
+	b.Handle(tele.OnCallback, func(c tele.Context) error {
+		cb := c.Callback()
+		if cb == nil {
+			return nil
+		}
+		// 唯一键在 options.Data 中以 \f 开头，格式: \funique|payload
+		// 库已解析到 c.Callback().Unique 和 c.Callback().Data（去掉前缀）
+		switch cb.Unique {
+		case "net_eth":
+			_ = c.Respond()
+			return showDEXMenu(c, "ETH")
+		case "net_sol":
+			_ = c.Respond()
+			return showDEXMenu(c, "SOL")
+		case "net_bsc":
+			_ = c.Respond()
+			return showDEXMenu(c, "BSC")
+		default:
+			return c.Respond()
+		}
 	})
 
 	// 处理DEX选择 - ETH网络
@@ -321,20 +331,6 @@ func showTradeMenu(c tele.Context) error {
 
 	return c.Send("🌐 请选择交易网络：", inl)
 }
-
-// 回调处理
-b.Handle(&btnETH, func(c tele.Context) error {
-	_ = c.Respond()
-	return showDEXMenu(c, "ETH")
-})
-b.Handle(&btnSOL, func(c tele.Context) error {
-	_ = c.Respond()
-	return showDEXMenu(c, "SOL")
-})
-b.Handle(&btnBSC, func(c tele.Context) error {
-	_ = c.Respond()
-	return showDEXMenu(c, "BSC")
-})
 
 // 显示DEX选择菜单
 func showDEXMenu(c tele.Context, network string) error {
