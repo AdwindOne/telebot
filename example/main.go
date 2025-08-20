@@ -74,7 +74,7 @@ func main() {
 		btnPortfolio := menu.Text("📊 投资组合")
 		btnHelp := menu.Text("❓ 帮助")
 		menu.Reply(menu.Row(btnTrade), menu.Row(btnPortfolio, btnHelp))
-		
+
 		return c.Send("🤖 欢迎使用 DEX 交易 Bot！\n\n"+
 			"支持的网络：ETH、SOL、BSC\n"+
 			"支持的DEX：Uniswap、Raydium、PancakeSwap等\n\n"+
@@ -174,7 +174,7 @@ func main() {
 	// 处理普通聊天消息
 	b.Handle(tele.OnText, func(c tele.Context) error {
 		message := c.Text()
-		
+
 		// 根据消息内容进行不同的回复
 		switch {
 		case message == "你好" || message == "hello" || message == "hi":
@@ -221,19 +221,19 @@ func main() {
 	log.Println("💬 试试发送：你好、时间、帮助")
 	log.Println("🚀 发送 /trade 开始 DEX 交易")
 	log.Println("⏹️  按 Ctrl+C 停止 Bot")
-	
+
 	b.Start()
 }
 
 // 显示交易菜单
 func showTradeMenu(c tele.Context) error {
 	menu := &tele.ReplyMarkup{ResizeKeyboard: true}
-	
+
 	var buttons []tele.Btn
 	for network := range supportedDEXs {
 		buttons = append(buttons, menu.Text("🌐 "+network))
 	}
-	
+
 	// 每行最多2个按钮
 	for i := 0; i < len(buttons); i += 2 {
 		if i+1 < len(buttons) {
@@ -242,19 +242,19 @@ func showTradeMenu(c tele.Context) error {
 			menu.Reply(menu.Row(buttons[i]))
 		}
 	}
-	
+
 	return c.Send("🌐 请选择交易网络：", menu)
 }
 
 // 显示DEX选择菜单
 func showDEXMenu(c tele.Context, network string) error {
 	menu := &tele.ReplyMarkup{ResizeKeyboard: true}
-	
+
 	var buttons []tele.Btn
 	for _, dex := range supportedDEXs[network] {
 		buttons = append(buttons, menu.Text("🔄 "+dex))
 	}
-	
+
 	// 每行最多2个按钮
 	for i := 0; i < len(buttons); i += 2 {
 		if i+1 < len(buttons) {
@@ -263,19 +263,19 @@ func showDEXMenu(c tele.Context, network string) error {
 			menu.Reply(menu.Row(buttons[i]))
 		}
 	}
-	
+
 	return c.Send("🔄 请选择 "+network+" 网络上的 DEX：", menu)
 }
 
 // 显示代币选择菜单
 func showTokenSelection(c tele.Context, dexName string) error {
 	menu := &tele.ReplyMarkup{ResizeKeyboard: true}
-	
+
 	var buttons []tele.Btn
 	for token := range supportedTokens["ETH"] { // 默认显示ETH代币，实际应该根据网络选择
 		buttons = append(buttons, menu.Text("💰 "+token))
 	}
-	
+
 	// 每行最多2个按钮
 	for i := 0; i < len(buttons); i += 2 {
 		if i+1 < len(buttons) {
@@ -284,7 +284,7 @@ func showTokenSelection(c tele.Context, dexName string) error {
 			menu.Reply(menu.Row(buttons[i]))
 		}
 	}
-	
+
 	return c.Send("💰 请选择要交易的代币（"+dexName+"）：", menu)
 }
 
@@ -310,7 +310,7 @@ func showTradeForm(c tele.Context, tokenName string) error {
 • 钱包地址: 你的钱包地址
 
 💡 提示：请确保钱包地址正确且有足够余额`
-	
+
 	return c.Send(form)
 }
 
@@ -320,13 +320,13 @@ func processTradeSubmission(c tele.Context) error {
 	if len(args) < 7 {
 		return c.Send("❌ 参数不足！请按格式填写：\n/trade_form <网络> <DEX> <输入代币> <输出代币> <数量> <滑点%> <钱包地址>")
 	}
-	
+
 	// 解析参数
 	network := args[0]
 	dex := args[1]
 	tokenIn := args[2]
 	tokenOut := args[3]
-	amount, err := strconv.ParseFloat(args[4], 64)
+	_, err := strconv.ParseFloat(args[4], 64)
 	if err != nil {
 		return c.Send("❌ 数量格式错误！请输入数字")
 	}
@@ -335,12 +335,12 @@ func processTradeSubmission(c tele.Context) error {
 		return c.Send("❌ 滑点格式错误！请输入数字")
 	}
 	walletAddr := args[6]
-	
+
 	// 验证参数
 	if slippage < 0.1 || slippage > 10 {
 		return c.Send("❌ 滑点必须在 0.1% - 10% 之间")
 	}
-	
+
 	// 显示交易确认
 	confirmation := `📋 交易确认
 
@@ -355,12 +355,12 @@ DEX: ` + dex + `
 预估输出: ~` + tokenOut + ` (根据当前价格)
 
 ⚠️ 请确认以上信息是否正确`
-	
+
 	menu := &tele.ReplyMarkup{ResizeKeyboard: true}
 	btnConfirm := menu.Text("✅ 确认交易")
 	btnCancel := menu.Text("❌ 取消交易")
 	menu.Reply(menu.Row(btnConfirm, btnCancel))
-	
+
 	return c.Send(confirmation, menu)
 }
 
@@ -368,7 +368,7 @@ DEX: ` + dex + `
 func executeTrade(c tele.Context) error {
 	// 这里应该实现实际的交易逻辑
 	// 包括：价格查询、滑点计算、交易签名、广播等
-	
+
 	return c.Send("🚀 交易已提交！\n\n" +
 		"📊 交易状态：处理中\n" +
 		"⏱️ 预计完成时间：30秒\n" +
@@ -422,6 +422,6 @@ func showHelp(c tele.Context) error {
 • 验证合约地址
 • 使用官方DEX
 • 小额测试交易`
-	
+
 	return c.Send(help)
 }
