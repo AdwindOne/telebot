@@ -130,6 +130,7 @@ func main() {
 			return nil
 		}
 		switch cb.Unique {
+		// 网络选择
 		case "net_eth":
 			_ = c.Respond()
 			return showDEXMenu(c, "ETH")
@@ -139,74 +140,183 @@ func main() {
 		case "net_bsc":
 			_ = c.Respond()
 			return showDEXMenu(c, "BSC")
+		
+		// DEX选择 - ETH网络
+		case "dex_uniswap_v3_eth":
+			_ = c.Respond()
+			return showTokenSelection(c, "Uniswap V3")
+		case "dex_uniswap_v2_eth":
+			_ = c.Respond()
+			return showTokenSelection(c, "Uniswap V2")
+		case "dex_sushiswap_eth":
+			_ = c.Respond()
+			return showTokenSelection(c, "SushiSwap")
+		case "dex_1inch_eth":
+			_ = c.Respond()
+			return showTokenSelection(c, "1inch")
+		
+		// DEX选择 - SOL网络
+		case "dex_raydium_sol":
+			_ = c.Respond()
+			return showTokenSelection(c, "Raydium")
+		case "dex_orca_sol":
+			_ = c.Respond()
+			return showTokenSelection(c, "Orca")
+		case "dex_jupiter_sol":
+			_ = c.Respond()
+			return showTokenSelection(c, "Jupiter")
+		case "dex_serum_sol":
+			_ = c.Respond()
+			return showTokenSelection(c, "Serum")
+		
+		// DEX选择 - BSC网络
+		case "dex_pancakeswap_bsc":
+			_ = c.Respond()
+			return showTokenSelection(c, "PancakeSwap")
+		case "dex_biswap_bsc":
+			_ = c.Respond()
+			return showTokenSelection(c, "Biswap")
+		
+		// 代币选择 - ETH代币
+		case "token_usdt_eth":
+			_ = c.Respond()
+			return showTradeForm(c, "USDT")
+		case "token_usdc_eth":
+			_ = c.Respond()
+			return showTradeForm(c, "USDC")
+		case "token_weth_eth":
+			_ = c.Respond()
+			return showTradeForm(c, "WETH")
+		case "token_dai_eth":
+			_ = c.Respond()
+			return showTradeForm(c, "DAI")
+		
+		// 代币选择 - SOL代币
+		case "token_sol_sol":
+			_ = c.Respond()
+			return showTradeForm(c, "SOL")
+		case "token_ray_sol":
+			_ = c.Respond()
+			return showTradeForm(c, "RAY")
+		
+		// 代币选择 - BSC代币
+		case "token_bnb_bsc":
+			_ = c.Respond()
+			return showTradeForm(c, "BNB")
+		case "token_cake_bsc":
+			_ = c.Respond()
+			return showTradeForm(c, "CAKE")
+		
+		// 快速交易按钮
+		case "quick_trade_usdt", "quick_trade_usdc", "quick_trade_weth", "quick_trade_dai",
+		     "quick_trade_sol", "quick_trade_ray", "quick_trade_bnb", "quick_trade_cake":
+			_ = c.Respond()
+			return showQuickTradeForm(c)
+		
+		// 自定义交易按钮
+		case "custom_trade_usdt", "custom_trade_usdc", "custom_trade_weth", "custom_trade_dai",
+		     "custom_trade_sol", "custom_trade_ray", "custom_trade_bnb", "custom_trade_cake":
+			_ = c.Respond()
+			return showCustomTradeForm(c)
+		
+		// 返回按钮
+		case "back_to_trade":
+			_ = c.Respond()
+			return showTradeMenu(c)
+		
+		// 快速交易代币选择
+		case "quick_usdt":
+			_ = c.Respond()
+			return c.Send("⚡ 快速交易 USDT\n\n请输入交易数量：\n/trade_form ETH Uniswap USDT WETH <数量> 0.5 <钱包地址>")
+		case "quick_usdc":
+			_ = c.Respond()
+			return c.Send("⚡ 快速交易 USDC\n\n请输入交易数量：\n/trade_form ETH Uniswap USDC WETH <数量> 0.5 <钱包地址>")
+		case "quick_weth":
+			_ = c.Respond()
+			return c.Send("⚡ 快速交易 WETH\n\n请输入交易数量：\n/trade_form ETH Uniswap WETH USDT <数量> 0.5 <钱包地址>")
+		
 		default:
 			return c.Respond()
 		}
 	})
 
-	// 处理DEX选择 - ETH网络
-	b.Handle("🔄 Uniswap V3", func(c tele.Context) error {
+		// 处理DEX选择回调
+	b.Handle("\fdex_uniswap_v3_eth", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTokenSelection(c, "Uniswap V3")
 	})
-	b.Handle("🔄 Uniswap V2", func(c tele.Context) error {
+	b.Handle("\fdex_uniswap_v2_eth", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTokenSelection(c, "Uniswap V2")
 	})
-	b.Handle("🔄 SushiSwap", func(c tele.Context) error {
+	b.Handle("\fdex_sushiswap_eth", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTokenSelection(c, "SushiSwap")
 	})
-	b.Handle("🔄 1inch", func(c tele.Context) error {
+	b.Handle("\fdex_1inch_eth", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTokenSelection(c, "1inch")
 	})
-
-	// 处理DEX选择 - SOL网络
-	b.Handle("🔄 Raydium", func(c tele.Context) error {
+	
+	b.Handle("\fdex_raydium_sol", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTokenSelection(c, "Raydium")
 	})
-	b.Handle("🔄 Orca", func(c tele.Context) error {
+	b.Handle("\fdex_orca_sol", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTokenSelection(c, "Orca")
 	})
-	b.Handle("🔄 Jupiter", func(c tele.Context) error {
+	b.Handle("\fdex_jupiter_sol", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTokenSelection(c, "Jupiter")
 	})
-	b.Handle("🔄 Serum", func(c tele.Context) error {
+	b.Handle("\fdex_serum_sol", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTokenSelection(c, "Serum")
 	})
-
-	// 处理DEX选择 - BSC网络
-	b.Handle("🔄 PancakeSwap", func(c tele.Context) error {
+	
+	b.Handle("\fdex_pancakeswap_bsc", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTokenSelection(c, "PancakeSwap")
 	})
-	b.Handle("🔄 Biswap", func(c tele.Context) error {
+	b.Handle("\fdex_biswap_bsc", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTokenSelection(c, "Biswap")
 	})
 
-	// 处理代币选择 - ETH代币
-	b.Handle("💰 USDT", func(c tele.Context) error {
+		// 处理代币选择回调
+	b.Handle("\ftoken_usdt_eth", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTradeForm(c, "USDT")
 	})
-	b.Handle("💰 USDC", func(c tele.Context) error {
+	b.Handle("\ftoken_usdc_eth", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTradeForm(c, "USDC")
 	})
-	b.Handle("💰 WETH", func(c tele.Context) error {
+	b.Handle("\ftoken_weth_eth", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTradeForm(c, "WETH")
 	})
-	b.Handle("💰 DAI", func(c tele.Context) error {
+	b.Handle("\ftoken_dai_eth", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTradeForm(c, "DAI")
 	})
-
-	// 处理代币选择 - SOL代币
-	b.Handle("💰 SOL", func(c tele.Context) error {
+	
+	b.Handle("\ftoken_sol_sol", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTradeForm(c, "SOL")
 	})
-	b.Handle("💰 RAY", func(c tele.Context) error {
+	b.Handle("\ftoken_ray_sol", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTradeForm(c, "RAY")
 	})
-
-	// 处理代币选择 - BSC代币
-	b.Handle("💰 BNB", func(c tele.Context) error {
+	
+	b.Handle("\ftoken_bnb_bsc", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTradeForm(c, "BNB")
 	})
-	b.Handle("💰 CAKE", func(c tele.Context) error {
+	b.Handle("\ftoken_cake_bsc", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTradeForm(c, "CAKE")
 	})
 
@@ -220,19 +330,92 @@ func main() {
 		return processTradeSubmission(c)
 	})
 
-	// 处理快速交易按钮
-	b.Handle("⚡ 快速交易", func(c tele.Context) error {
+	// 处理快速交易按钮回调
+	b.Handle("\fquick_trade_usdt", func(c tele.Context) error {
+		_ = c.Respond()
+		return showQuickTradeForm(c)
+	})
+	b.Handle("\fquick_trade_usdc", func(c tele.Context) error {
+		_ = c.Respond()
+		return showQuickTradeForm(c)
+	})
+	b.Handle("\fquick_trade_weth", func(c tele.Context) error {
+		_ = c.Respond()
+		return showQuickTradeForm(c)
+	})
+	b.Handle("\fquick_trade_dai", func(c tele.Context) error {
+		_ = c.Respond()
+		return showQuickTradeForm(c)
+	})
+	b.Handle("\fquick_trade_sol", func(c tele.Context) error {
+		_ = c.Respond()
+		return showQuickTradeForm(c)
+	})
+	b.Handle("\fquick_trade_ray", func(c tele.Context) error {
+		_ = c.Respond()
+		return showQuickTradeForm(c)
+	})
+	b.Handle("\fquick_trade_bnb", func(c tele.Context) error {
+		_ = c.Respond()
+		return showQuickTradeForm(c)
+	})
+	b.Handle("\fquick_trade_cake", func(c tele.Context) error {
+		_ = c.Respond()
 		return showQuickTradeForm(c)
 	})
 
-	// 处理自定义交易按钮
-	b.Handle("📝 自定义交易", func(c tele.Context) error {
+	// 处理自定义交易按钮回调
+	b.Handle("\fcustom_trade_usdt", func(c tele.Context) error {
+		_ = c.Respond()
+		return showCustomTradeForm(c)
+	})
+	b.Handle("\fcustom_trade_usdc", func(c tele.Context) error {
+		_ = c.Respond()
+		return showCustomTradeForm(c)
+	})
+	b.Handle("\fcustom_trade_weth", func(c tele.Context) error {
+		_ = c.Respond()
+		return showCustomTradeForm(c)
+	})
+	b.Handle("\fcustom_trade_dai", func(c tele.Context) error {
+		_ = c.Respond()
+		return showCustomTradeForm(c)
+	})
+	b.Handle("\fcustom_trade_sol", func(c tele.Context) error {
+		_ = c.Respond()
+		return showCustomTradeForm(c)
+	})
+	b.Handle("\fcustom_trade_ray", func(c tele.Context) error {
+		_ = c.Respond()
+		return showCustomTradeForm(c)
+	})
+	b.Handle("\fcustom_trade_bnb", func(c tele.Context) error {
+		_ = c.Respond()
+		return showCustomTradeForm(c)
+	})
+	b.Handle("\fcustom_trade_cake", func(c tele.Context) error {
+		_ = c.Respond()
 		return showCustomTradeForm(c)
 	})
 
-	// 处理返回按钮
-	b.Handle("🔙 返回", func(c tele.Context) error {
+	// 处理返回按钮回调
+	b.Handle("\fback_to_trade", func(c tele.Context) error {
+		_ = c.Respond()
 		return showTradeMenu(c)
+	})
+
+	// 处理快速交易代币选择回调
+	b.Handle("\fquick_usdt", func(c tele.Context) error {
+		_ = c.Respond()
+		return c.Send("⚡ 快速交易 USDT\n\n请输入交易数量：\n/trade_form ETH Uniswap USDT WETH <数量> 0.5 <钱包地址>")
+	})
+	b.Handle("\fquick_usdc", func(c tele.Context) error {
+		_ = c.Respond()
+		return c.Send("⚡ 快速交易 USDC\n\n请输入交易数量：\n/trade_form ETH Uniswap USDC WETH <数量> 0.5 <钱包地址>")
+	})
+	b.Handle("\fquick_weth", func(c tele.Context) error {
+		_ = c.Respond()
+		return c.Send("⚡ 快速交易 WETH\n\n请输入交易数量：\n/trade_form ETH Uniswap WETH USDT <数量> 0.5 <钱包地址>")
 	})
 
 	// 处理交易确认
@@ -343,33 +526,35 @@ func showTradeMenu(c tele.Context) error {
 
 // 显示DEX选择菜单
 func showDEXMenu(c tele.Context, network string) error {
-	menu := &tele.ReplyMarkup{ResizeKeyboard: true}
+	inl := &tele.ReplyMarkup{}
 
 	var buttons []tele.Btn
 	for _, dex := range supportedDEXs[network] {
-		buttons = append(buttons, menu.Text("🔄 "+dex))
+		// 生成唯一键：dex_网络名_去空格
+		uniqueKey := "dex_" + strings.ToLower(strings.ReplaceAll(dex, " ", "_")) + "_" + strings.ToLower(network)
+		buttons = append(buttons, inl.Data("🔄 "+dex, uniqueKey))
 	}
 
 	// 每行最多2个按钮
 	for i := 0; i < len(buttons); i += 2 {
 		if i+1 < len(buttons) {
-			menu.Reply(menu.Row(buttons[i], buttons[i+1]))
+			inl.Inline(inl.Row(buttons[i], buttons[i+1]))
 		} else {
-			menu.Reply(menu.Row(buttons[i]))
+			inl.Inline(inl.Row(buttons[i]))
 		}
 	}
 
-	return c.Send("🔄 请选择 "+network+" 网络上的 DEX：", menu)
+	return c.Send("🔄 请选择 "+network+" 网络上的 DEX：", inl)
 }
 
 // 显示代币选择菜单
 func showTokenSelection(c tele.Context, dexName string) error {
-	menu := &tele.ReplyMarkup{ResizeKeyboard: true}
-
+	inl := &tele.ReplyMarkup{}
+	
 	// 根据DEX确定网络和对应的代币
 	var network string
 	var tokens []string
-
+	
 	switch dexName {
 	case "Uniswap V3", "Uniswap V2", "SushiSwap", "1inch":
 		network = "ETH"
@@ -392,29 +577,31 @@ func showTokenSelection(c tele.Context, dexName string) error {
 			tokens = append(tokens, token)
 		}
 	}
-
+	
 	var buttons []tele.Btn
 	for _, token := range tokens {
-		buttons = append(buttons, menu.Text("💰 "+token))
+		// 生成唯一键：token_代币名_网络名
+		uniqueKey := "token_" + strings.ToLower(token) + "_" + strings.ToLower(network)
+		buttons = append(buttons, inl.Data("💰 "+token, uniqueKey))
 	}
-
+	
 	// 每行最多2个按钮
 	for i := 0; i < len(buttons); i += 2 {
 		if i+1 < len(buttons) {
-			menu.Reply(menu.Row(buttons[i], buttons[i+1]))
+			inl.Inline(inl.Row(buttons[i], buttons[i+1]))
 		} else {
-			menu.Reply(menu.Row(buttons[i]))
+			inl.Inline(inl.Row(buttons[i]))
 		}
 	}
-
-	return c.Send("💰 请选择要交易的代币（"+network+" 网络 - "+dexName+"）：", menu)
+	
+	return c.Send("💰 请选择要交易的代币（"+network+" 网络 - "+dexName+"）：", inl)
 }
 
 // 显示交易表单
 func showTradeForm(c tele.Context, tokenName string) error {
 	// 创建快速交易按钮
-	menu := &tele.ReplyMarkup{ResizeKeyboard: true}
-
+	inl := &tele.ReplyMarkup{}
+	
 	// 根据代币确定网络
 	var network string
 	switch tokenName {
@@ -427,14 +614,14 @@ func showTradeForm(c tele.Context, tokenName string) error {
 	default:
 		network = "ETH"
 	}
-
+	
 	// 创建快速交易选项
-	btnQuickTrade := menu.Text("⚡ 快速交易")
-	btnCustomTrade := menu.Text("📝 自定义交易")
-	btnBack := menu.Text("🔙 返回")
-
-	menu.Reply(menu.Row(btnQuickTrade), menu.Row(btnCustomTrade), menu.Row(btnBack))
-
+	btnQuickTrade := inl.Data("⚡ 快速交易", "quick_trade_"+strings.ToLower(tokenName))
+	btnCustomTrade := inl.Data("📝 自定义交易", "custom_trade_"+strings.ToLower(tokenName))
+	btnBack := inl.Data("🔙 返回", "back_to_trade")
+	
+	inl.Inline(inl.Row(btnQuickTrade), inl.Row(btnCustomTrade), inl.Row(btnBack))
+	
 	form := `📝 交易表单
 
 代币: ` + tokenName + `
@@ -452,8 +639,8 @@ func showTradeForm(c tele.Context, tokenName string) error {
 /trade_form ` + network + ` Uniswap ` + tokenName + ` WETH 100 0.5 0x1234567890abcdef
 
 💡 提示：请确保钱包地址正确且有足够余额`
-
-	return c.Send(form, menu)
+	
+	return c.Send(form, inl)
 }
 
 // 处理交易表单提交
@@ -656,16 +843,16 @@ func executeTrade(c tele.Context) error {
 
 // 显示快速交易表单
 func showQuickTradeForm(c tele.Context) error {
-	menu := &tele.ReplyMarkup{ResizeKeyboard: true}
-
+	inl := &tele.ReplyMarkup{}
+	
 	// 快速交易选项
-	btnUSDT := menu.Text("💰 USDT")
-	btnUSDC := menu.Text("💰 USDC")
-	btnWETH := menu.Text("💰 WETH")
-	btnBack := menu.Text("🔙 返回")
-
-	menu.Reply(menu.Row(btnUSDT, btnUSDC), menu.Row(btnWETH), menu.Row(btnBack))
-
+	btnUSDT := inl.Data("💰 USDT", "quick_usdt")
+	btnUSDC := inl.Data("💰 USDC", "quick_usdc")
+	btnWETH := inl.Data("💰 WETH", "quick_weth")
+	btnBack := inl.Data("🔙 返回", "back_to_trade")
+	
+	inl.Inline(inl.Row(btnUSDT, btnUSDC), inl.Row(btnWETH), inl.Row(btnBack))
+	
 	form := `⚡ 快速交易
 
 请选择要交换的代币：
@@ -680,8 +867,8 @@ func showQuickTradeForm(c tele.Context) error {
 • Gas: 自动优化
 
 💡 选择代币后，请输入交易数量`
-
-	return c.Send(form, menu)
+	
+	return c.Send(form, inl)
 }
 
 // 显示自定义交易表单
